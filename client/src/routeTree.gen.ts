@@ -16,10 +16,17 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const FriendsLazyImport = createFileRoute('/friends')()
 const DashboardLazyImport = createFileRoute('/dashboard')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const FriendsLazyRoute = FriendsLazyImport.update({
+  id: '/friends',
+  path: '/friends',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/friends.lazy').then((d) => d.Route))
 
 const DashboardLazyRoute = DashboardLazyImport.update({
   id: '/dashboard',
@@ -51,6 +58,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardLazyImport
       parentRoute: typeof rootRoute
     }
+    '/friends': {
+      id: '/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof FriendsLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -59,36 +73,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/dashboard': typeof DashboardLazyRoute
+  '/friends': typeof FriendsLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/dashboard': typeof DashboardLazyRoute
+  '/friends': typeof FriendsLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
   '/dashboard': typeof DashboardLazyRoute
+  '/friends': typeof FriendsLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard'
+  fullPaths: '/' | '/dashboard' | '/friends'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard'
-  id: '__root__' | '/' | '/dashboard'
+  to: '/' | '/dashboard' | '/friends'
+  id: '__root__' | '/' | '/dashboard' | '/friends'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   DashboardLazyRoute: typeof DashboardLazyRoute
+  FriendsLazyRoute: typeof FriendsLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   DashboardLazyRoute: DashboardLazyRoute,
+  FriendsLazyRoute: FriendsLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -102,7 +121,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/dashboard"
+        "/dashboard",
+        "/friends"
       ]
     },
     "/": {
@@ -110,6 +130,9 @@ export const routeTree = rootRoute
     },
     "/dashboard": {
       "filePath": "dashboard.lazy.tsx"
+    },
+    "/friends": {
+      "filePath": "friends.lazy.tsx"
     }
   }
 }
