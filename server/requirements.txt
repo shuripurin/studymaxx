@@ -1,0 +1,7 @@
+Flask
+pytest
+requests
+gunicorn
+Werkzeug
+python-dotenv
+firebase-admin
