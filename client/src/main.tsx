@@ -3,6 +3,10 @@ import { StrictMode } from "react";
 import { Chip, createTheme, FileInput, MantineProvider } from "@mantine/core";
 import "./styles/index.css";
 import "@mantine/core/styles.css";
+import { routeTree } from "./routeTree.gen";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+
+const router = createRouter({ routeTree });
 
 const theme = createTheme({
   /** Put your mantine theme override here */
@@ -22,6 +26,7 @@ if (!rootElement.innerHTML) {
         />
         <Chip defaultChecked>Awesome chip</Chip>
         <h1 className="text-3xl font-bold underline">Hello world!</h1>
+        <RouterProvider router={router} />
       </MantineProvider>
     </StrictMode>
   );
