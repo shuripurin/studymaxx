@@ -1,0 +1,22 @@
+# Ignore virtual environment
+server/.venv/
+
+# Ignore environment variable files
+server/.env
+
+# Ignore Firebase service key
+server/firebase-key.json
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.log
+
+# VSCode settings
+.vscode/
+
+# OS / Editor junk
+.DS_Store
+*.swp
+Thumbs.db
+
