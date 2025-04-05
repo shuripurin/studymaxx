@@ -21,6 +21,7 @@ if (!rootElement.innerHTML) {
           placeholder="Input placeholder"
         />
         <Chip defaultChecked>Awesome chip</Chip>
+        <h1 className="text-3xl font-bold underline">Hello world!</h1>
       </MantineProvider>
     </StrictMode>
   );
