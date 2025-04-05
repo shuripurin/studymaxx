@@ -50,29 +50,39 @@ export function Navbar() {
   return (
     <div className={classes.header}>
       <Drawer opened={opened} onClose={close} title="StudyMaxx">
-        {Object.entries(tabs).map(([tab, path]) => (
-          <Button
-            key={tab}
-            variant="light"
-            fullWidth
-            mt="sm"
-            color="black"
-            onClick={() => {
-              console.log(`${tab} clicked`);
-              navigate({ to: path });
-              close();
-            }}
-          >
-            {tab}
-          </Button>
-        ))}
+        <div className="flex flex-col items-center gap-2">
+          {Object.entries(tabs).map(([tab, path]) => (
+            <Button
+              key={tab}
+              variant="filled"
+              color="dark"
+              w={275}
+              mt="sm"
+              onClick={() => {
+                navigate({ to: path });
+                close();
+              }}
+            >
+              {tab}
+            </Button>
+          ))}
+        </div>
       </Drawer>
       <Burger opened={opened} onClick={open} size="sm" />
       <Text size="md" fw={700}>
         StudyMaxx
       </Text>
       <div className="flex flex-wrap align-center items-center">
-        <Button>My Dashboard</Button>
+        <Button
+          variant="filled"
+          color="dark"
+          onClick={() => {
+            navigate({ to: "/dashboard" });
+            close();
+          }}
+        >
+          My Dashboard
+        </Button>
         <Menu
           width={260}
           position="bottom-end"
