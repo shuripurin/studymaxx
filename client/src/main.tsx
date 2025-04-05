@@ -20,9 +20,6 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <MantineProvider theme={theme}>
         <RouterProvider router={router} />
-        <div className="color-blue underline">
-          testing
-        </div>
       </MantineProvider>
     </StrictMode>
   );
