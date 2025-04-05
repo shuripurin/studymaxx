@@ -1,10 +1,33 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import ReactDOM from "react-dom/client";
+import { StrictMode } from "react";
+import { Chip, createTheme, FileInput, MantineProvider } from "@mantine/core";
+import "./styles/index.css";
+import "@mantine/core/styles.css";
+import { routeTree } from "./routeTree.gen";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const router = createRouter({ routeTree });
+
+const theme = createTheme({
+  /** Put your mantine theme override here */
+});
+
+const rootElement = document.getElementById("root")!;
+
+if (!rootElement.innerHTML) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <StrictMode>
+      <MantineProvider theme={theme}>
+        <FileInput
+          label="Input label"
+          description="Input description"
+          placeholder="Input placeholder"
+        />
+        <Chip defaultChecked>Awesome chip</Chip>
+        <h1 className="text-3xl font-bold underline">Hello world!</h1>
+        <RouterProvider router={router} />
+      </MantineProvider>
+    </StrictMode>
+  );
+}
