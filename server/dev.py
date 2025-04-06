@@ -36,6 +36,16 @@ gemini_client = initialize_genai_client()
 
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+cred = credentials.Certificate("fire-5a6ba-e3c9ccfcc757.json")
+
+firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+
 # Read the contents of config.txt as a string
 config_file_path = os.path.join(os.path.dirname(__file__), "config.txt")
 try:
@@ -47,6 +57,17 @@ except FileNotFoundError:
 @app.route("/")
 def hello_world():
     return "<p>2025 Beaverhacks!</p>"
+
+@app.route('/api/gemini/preferences')
+def preferences():
+    # Fetch a single document from Firestore
+    doc_ref = db.collection("users").document("guest")  # Replace "guest" with the desired document ID
+    doc = doc_ref.get()
+
+    if doc.exists:
+        return jsonify(doc.to_dict())  # Return the document's data as JSON
+    else:
+        return jsonify({"error": "Document not found"}), 404
 
 @app.route('/api/gemini/chat', methods=['POST'])
 def chat_with_gemini():
