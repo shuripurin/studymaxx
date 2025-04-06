@@ -8,175 +8,209 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
 
 // Import Routes
 
-import { Route as rootRoute } from "./routes/__root";
-import { Route as SignUpImport } from "./routes/sign-up";
-import { Route as SignInImport } from "./routes/sign-in";
-import { Route as GraphImport } from "./routes/graph";
+import { Route as rootRoute } from './routes/__root'
+import { Route as SignUpImport } from './routes/sign-up'
+import { Route as SignInImport } from './routes/sign-in'
+import { Route as PreferencesImport } from './routes/preferences'
+import { Route as GraphImport } from './routes/graph'
 
 // Create Virtual Routes
 
-const NotesLazyImport = createFileRoute("/notes")();
-const FriendsLazyImport = createFileRoute("/friends")();
-const IndexLazyImport = createFileRoute("/")();
+const FriendsLazyImport = createFileRoute('/friends')()
+const AihelpLazyImport = createFileRoute('/ai_help')()
+const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
 
-const NotesLazyRoute = NotesLazyImport.update({
-  id: "/notes",
-  path: "/notes",
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import("./routes/notes.lazy").then((d) => d.Route));
-
 const FriendsLazyRoute = FriendsLazyImport.update({
-  id: "/friends",
-  path: "/friends",
+  id: '/friends',
+  path: '/friends',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import("./routes/friends.lazy").then((d) => d.Route));
+} as any).lazy(() => import('./routes/friends.lazy').then((d) => d.Route))
+
+const AihelpLazyRoute = AihelpLazyImport.update({
+  id: '/ai_help',
+  path: '/ai_help',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/ai_help.lazy').then((d) => d.Route))
 
 const SignUpRoute = SignUpImport.update({
-  id: "/sign-up",
-  path: "/sign-up",
+  id: '/sign-up',
+  path: '/sign-up',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const SignInRoute = SignInImport.update({
-  id: "/sign-in",
-  path: "/sign-in",
+  id: '/sign-in',
+  path: '/sign-in',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
+
+const PreferencesRoute = PreferencesImport.update({
+  id: '/preferences',
+  path: '/preferences',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const GraphRoute = GraphImport.update({
-  id: "/graph",
-  path: "/graph",
+  id: '/graph',
+  path: '/graph',
   getParentRoute: () => rootRoute,
-} as any);
+} as any)
 
 const IndexLazyRoute = IndexLazyImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import("./routes/index.lazy").then((d) => d.Route));
+} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
 // Populate the FileRoutesByPath interface
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexLazyImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/graph": {
-      id: "/graph";
-      path: "/graph";
-      fullPath: "/graph";
-      preLoaderRoute: typeof GraphImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/sign-in": {
-      id: "/sign-in";
-      path: "/sign-in";
-      fullPath: "/sign-in";
-      preLoaderRoute: typeof SignInImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/sign-up": {
-      id: "/sign-up";
-      path: "/sign-up";
-      fullPath: "/sign-up";
-      preLoaderRoute: typeof SignUpImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/friends": {
-      id: "/friends";
-      path: "/friends";
-      fullPath: "/friends";
-      preLoaderRoute: typeof FriendsLazyImport;
-      parentRoute: typeof rootRoute;
-    };
-    "/notes": {
-      id: "/notes";
-      path: "/notes";
-      fullPath: "/notes";
-      preLoaderRoute: typeof NotesLazyImport;
-      parentRoute: typeof rootRoute;
-    };
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/graph': {
+      id: '/graph'
+      path: '/graph'
+      fullPath: '/graph'
+      preLoaderRoute: typeof GraphImport
+      parentRoute: typeof rootRoute
+    }
+    '/preferences': {
+      id: '/preferences'
+      path: '/preferences'
+      fullPath: '/preferences'
+      preLoaderRoute: typeof PreferencesImport
+      parentRoute: typeof rootRoute
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInImport
+      parentRoute: typeof rootRoute
+    }
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpImport
+      parentRoute: typeof rootRoute
+    }
+    '/ai_help': {
+      id: '/ai_help'
+      path: '/ai_help'
+      fullPath: '/ai_help'
+      preLoaderRoute: typeof AihelpLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/friends': {
+      id: '/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof FriendsLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexLazyRoute;
-  "/graph": typeof GraphRoute;
-  "/sign-in": typeof SignInRoute;
-  "/sign-up": typeof SignUpRoute;
-  "/friends": typeof FriendsLazyRoute;
-  "/notes": typeof NotesLazyRoute;
+  '/': typeof IndexLazyRoute
+  '/graph': typeof GraphRoute
+  '/preferences': typeof PreferencesRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/ai_help': typeof AihelpLazyRoute
+  '/friends': typeof FriendsLazyRoute
 }
 
 export interface FileRoutesByTo {
-  "/": typeof IndexLazyRoute;
-  "/graph": typeof GraphRoute;
-  "/sign-in": typeof SignInRoute;
-  "/sign-up": typeof SignUpRoute;
-  "/friends": typeof FriendsLazyRoute;
-  "/notes": typeof NotesLazyRoute;
+  '/': typeof IndexLazyRoute
+  '/graph': typeof GraphRoute
+  '/preferences': typeof PreferencesRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/ai_help': typeof AihelpLazyRoute
+  '/friends': typeof FriendsLazyRoute
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute;
-  "/": typeof IndexLazyRoute;
-  "/graph": typeof GraphRoute;
-  "/sign-in": typeof SignInRoute;
-  "/sign-up": typeof SignUpRoute;
-  "/friends": typeof FriendsLazyRoute;
-  "/notes": typeof NotesLazyRoute;
+  __root__: typeof rootRoute
+  '/': typeof IndexLazyRoute
+  '/graph': typeof GraphRoute
+  '/preferences': typeof PreferencesRoute
+  '/sign-in': typeof SignInRoute
+  '/sign-up': typeof SignUpRoute
+  '/ai_help': typeof AihelpLazyRoute
+  '/friends': typeof FriendsLazyRoute
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/graph" | "/sign-in" | "/sign-up" | "/friends" | "/notes";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/graph" | "/sign-in" | "/sign-up" | "/friends" | "/notes";
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/graph'
+    | '/preferences'
+    | '/sign-in'
+    | '/sign-up'
+    | '/ai_help'
+    | '/friends'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/graph'
+    | '/preferences'
+    | '/sign-in'
+    | '/sign-up'
+    | '/ai_help'
+    | '/friends'
   id:
-    | "__root__"
-    | "/"
-    | "/graph"
-    | "/sign-in"
-    | "/sign-up"
-    | "/friends"
-    | "/notes";
-  fileRoutesById: FileRoutesById;
+    | '__root__'
+    | '/'
+    | '/graph'
+    | '/preferences'
+    | '/sign-in'
+    | '/sign-up'
+    | '/ai_help'
+    | '/friends'
+  fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute;
-  GraphRoute: typeof GraphRoute;
-  SignInRoute: typeof SignInRoute;
-  SignUpRoute: typeof SignUpRoute;
-  FriendsLazyRoute: typeof FriendsLazyRoute;
-  NotesLazyRoute: typeof NotesLazyRoute;
+  IndexLazyRoute: typeof IndexLazyRoute
+  GraphRoute: typeof GraphRoute
+  PreferencesRoute: typeof PreferencesRoute
+  SignInRoute: typeof SignInRoute
+  SignUpRoute: typeof SignUpRoute
+  AihelpLazyRoute: typeof AihelpLazyRoute
+  FriendsLazyRoute: typeof FriendsLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   GraphRoute: GraphRoute,
+  PreferencesRoute: PreferencesRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
+  AihelpLazyRoute: AihelpLazyRoute,
   FriendsLazyRoute: FriendsLazyRoute,
-  NotesLazyRoute: NotesLazyRoute,
-};
+}
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
@@ -186,10 +220,11 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/graph",
+        "/preferences",
         "/sign-in",
         "/sign-up",
-        "/friends",
-        "/notes"
+        "/ai_help",
+        "/friends"
       ]
     },
     "/": {
@@ -198,17 +233,20 @@ export const routeTree = rootRoute
     "/graph": {
       "filePath": "graph.jsx"
     },
+    "/preferences": {
+      "filePath": "preferences.tsx"
+    },
     "/sign-in": {
       "filePath": "sign-in.tsx"
     },
     "/sign-up": {
       "filePath": "sign-up.tsx"
     },
+    "/ai_help": {
+      "filePath": "ai_help.lazy.tsx"
+    },
     "/friends": {
       "filePath": "friends.lazy.tsx"
-    },
-    "/notes": {
-      "filePath": "notes.lazy.tsx"
     }
   }
 }
