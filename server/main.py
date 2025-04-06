@@ -14,6 +14,8 @@ from pydantic import BaseModel
 
 from dashboard import create_dashboard  # Import the dashboard creation function
 
+from flask_cors import CORS  # Import Flask-CORS
+
 # Load .env only in local development
 if os.environ.get("FLASK_ENV") == "development":
     from dotenv import load_dotenv
@@ -24,6 +26,8 @@ google_search_tool = Tool(
 )
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:5173", "https://studymaxx.vercel.app"])  # Enable CORS for specific origins
+
 gemini_client = initialize_genai_client()
 
 # Read the contents of config.txt as a string

@@ -22,3 +22,6 @@ python test_backend.py
 
 ## Production
 flask debug should be set to 0
+
+## Dashboard
+https://c680-128-193-154-97.ngrok-free.app/dashboard/
