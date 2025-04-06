@@ -1,4 +1,4 @@
-#StudyMaxx
+# StudyMaxx
 
 StudyMaxx is a smart, centralized learning companion that empowers students to take charge of their academic success. It generates personalized learning plans, tracks study performance, and fosters motivation through data-driven visualizations and gamified features like leaderboards.
 
