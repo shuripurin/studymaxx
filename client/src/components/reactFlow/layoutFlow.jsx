@@ -10,11 +10,11 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { Drawer, Skeleton } from "@mantine/core";
+import { Drawer, Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import ELK from "elkjs/lib/elk.bundled.js";
-import { useQuery } from "@tanstack/react-query";
-import { fetchGraphNodes } from "../../routes.js";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { fetchGraphNodes, graphBaseUrl } from "../../routes.js";
 
 const elk = new ELK();
 const elkOptions = {
@@ -142,13 +142,52 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
     .catch(console.error);
 };
 
+const postMessage = async (payload) => {
+  const response = await fetch(graphBaseUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to post message");
+  }
+  return response.json();
+};
+
 export const LayoutFlow = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const { fitView } = useReactFlow();
   const [currentNodeId, setCurrentNodeId] = useState(null);
-
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const postMessageMutation = useMutation({
+    mutationFn: postMessage,
+    onSuccess: (data) => {
+      if (data.initialNodes && data.initialEdges) {
+        const opts = { "elk.direction": "DOWN", ...elkOptions };
+        getLayoutedElements(data.initialNodes, data.initialEdges, opts).then(
+          ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+            const resetStyles = getHighlightedNodes(
+              layoutedNodes,
+              layoutedEdges,
+              null
+            );
+            setLoading(false);
+            setNodes(resetStyles);
+            setEdges(layoutedEdges);
+            window.requestAnimationFrame(() => fitView());
+          }
+        );
+      }
+    },
+    onError: (error) => {
+      console.error("Error posting message:", error);
+      setLoading(false);
+    },
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["graphNodes"],
@@ -181,9 +220,7 @@ export const LayoutFlow = () => {
   const onLayout = useCallback(
     ({ direction }) => {
       const layoutOptions = { "elk.direction": direction, ...elkOptions };
-      const nodeSource = nodes;
-      const edgeSource = edges;
-      getLayoutedElements(nodeSource, edgeSource, layoutOptions).then(
+      getLayoutedElements(nodes, edges, layoutOptions).then(
         ({ nodes: layoutedNodes, edges: layoutedEdges }) => {
           const resetStyles = getHighlightedNodes(
             layoutedNodes,
@@ -216,66 +253,87 @@ export const LayoutFlow = () => {
     open();
   };
 
+  const handlePostMessage = () => {
+    setLoading(true);
+    postMessageMutation.mutate({ message });
+  };
+
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      onConnect={onConnect}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      fitView
-      panOnScroll
-      selectionOnDrag
-      minZoom={0.1}
-      onNodeMouseEnter={handleNodeMouseEnter}
-      onNodeMouseLeave={handleNodeMouseLeave}
-      onNodeClick={handleNodeClick}
-      style={{
-        backgroundColor: "transparent",
-        height: "100%",
-        width: "100%",
-      }}
-    >
-      <Panel position="top-right">
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-          <button
-            style={{
-              padding: "0.5rem",
-              backgroundColor: "#fff",
-              color: "#000000",
-              border: "1px solid #000000",
-              cursor: "pointer",
-            }}
-            onClick={() => onLayout({ direction: "DOWN" })}
-          >
-            Vertical Layout
-          </button>
-          <button
-            style={{
-              padding: "0.5rem",
-              backgroundColor: "#000000",
-              color: "#fff",
-              cursor: "pointer",
-            }}
-            onClick={() => onLayout({ direction: "RIGHT" })}
-          >
-            Horizontal Layout
-          </button>
-        </div>
-      </Panel>
-      <Background />
-      <Drawer
-        opened={opened}
-        onClose={close}
-        position="right"
-        title="Course Info"
+    <>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onConnect={onConnect}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        fitView
+        panOnScroll
+        selectionOnDrag
+        minZoom={0.1}
+        onNodeMouseEnter={handleNodeMouseEnter}
+        onNodeMouseLeave={handleNodeMouseLeave}
+        onNodeClick={handleNodeClick}
+        className="w-full h-full bg-transparent"
       >
-        <div style={{ padding: "1rem" }}>
-          <p>Click a node to toggle whether it’s been taken.</p>
-          <p>Hovered nodes will show prerequisites and unlocked courses.</p>
-        </div>
-      </Drawer>
-    </ReactFlow>
+        <Panel position="top-right">
+          <div className="flex gap-2">
+            <button
+              className="px-3 py-2 bg-white text-black border border-black cursor-pointer"
+              onClick={() => onLayout({ direction: "DOWN" })}
+            >
+              Vertical Layout
+            </button>
+            <button
+              className="px-3 py-2 bg-black text-white cursor-pointer"
+              onClick={() => onLayout({ direction: "RIGHT" })}
+            >
+              Horizontal Layout
+            </button>
+          </div>
+        </Panel>
+
+        <Panel position="top-center">
+          <div className="flex items-center gap-2 bg-gray-200 p-2 rounded">
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Ask me anything"
+              className="p-2 border border-gray-300 rounded"
+            />
+            {loading ? (
+              <Loader />
+            ) : (
+              <button
+                className="px-4 py-2 bg-black text-white cursor-pointer disabled:opacity-50"
+                onClick={handlePostMessage}
+                disabled={loading}
+              >
+                Send Message
+              </button>
+            )}
+            {postMessageMutation.error && (
+              <div className="text-red-500 mt-2">
+                Error: {postMessageMutation.error.message}
+              </div>
+            )}
+          </div>
+        </Panel>
+
+        <Background />
+        <Drawer
+          opened={opened}
+          onClose={close}
+          position="right"
+          title="Course Info"
+        >
+          <div className="p-4">
+            <p>Click a node to toggle whether it’s been taken.</p>
+            <p>Hovered nodes will show prerequisites and unlocked courses.</p>
+          </div>
+        </Drawer>
+      </ReactFlow>
+    </>
   );
 };
 

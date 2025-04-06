@@ -51,10 +51,10 @@ export function Navbar() {
 
   const tabs = {
     Dashboard: "/",
-    Profile: "/profile",
-    Notes: "/notes",
+    Preferences: "/preferences",
+    "AI Chat": "/AI_Chat",
     Friends: "/friends",
-    Graph: "/graph",
+    Graph: "/study_plan",
   };
 
   return (
