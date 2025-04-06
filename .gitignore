@@ -19,4 +19,6 @@ __pycache__/
 .DS_Store
 *.swp
 Thumbs.db
-
+firebase-key.json
+node_modules/
+package-lock.json
