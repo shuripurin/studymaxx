@@ -4,7 +4,7 @@ import dash
 from dash import dcc, html, Input, Output
 
 # Load data from Excel sheet
-excel_file = 'proxy_data.xlsx'  # Replace with your Excel file name
+excel_file = r'C:\Users\v\beavhacks25\proxy_data.xlsx'  # Replace with your Excel file name
 df = pd.read_excel(excel_file)
 
 # Convert 'Study Time' to total hours
@@ -17,11 +17,10 @@ def convert_to_hours(time_obj):
 
 df['StudyTime(Hours)'] = df['Study Time'].apply(convert_to_hours)
 
+# Initialize the Dash app
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
-    html.H1("Study Time Dashboard"),
-
     html.Div([
         html.Label("Select Student:"),
         dcc.Dropdown(
@@ -30,10 +29,8 @@ app.layout = html.Div([
             value=df['Student Name'].unique()[0]  # Default selected student, the first student from the excel sheet.
         ),
     ]),
-
     dcc.Graph(id='study-time-bar-chart'),
     dcc.Graph(id='leaderboard-bar-chart'),
-
 ])
 
 @app.callback(
@@ -42,7 +39,8 @@ app.layout = html.Div([
 )
 def update_study_time_chart(selected_student):
     filtered_df = df[df['Student Name'] == selected_student]
-    fig = px.bar(filtered_df, x='Subject', y='StudyTime(Hours)', title=f"Study Time for {selected_student}")
+    fig = px.bar(filtered_df, x='Subject', y='StudyTime(Hours)', title=f"Study Time for {selected_student}",
+                 color_discrete_sequence=['#2d2d2d'])  # Set bar color to charcoal grey
     return fig
 
 @app.callback(
@@ -52,8 +50,10 @@ def update_study_time_chart(selected_student):
 def update_leaderboard_chart(selected_student):
     student_totals = df.groupby('Student Name')['StudyTime(Hours)'].sum().reset_index()
     student_totals = student_totals.sort_values(by='StudyTime(Hours)', ascending=False)
-    fig = px.bar(student_totals, x='Student Name', y='StudyTime(Hours)', title="Study Time Leaderboard")
+    fig = px.bar(student_totals, x='Student Name', y='StudyTime(Hours)', title="Study Time Leaderboard",
+                 color_discrete_sequence=['#2d2d2d'])  # Set bar color to charcoal grey
     return fig
 
 if __name__ == '__main__':
+    print("Starting Dash application...")
     app.run(debug=True)
