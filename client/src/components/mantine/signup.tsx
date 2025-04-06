@@ -13,11 +13,12 @@ import {
   Text as MantineText,
 } from "@mantine/core";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../app/firebase";
 
 export function SignUp() {
   const [name, setName] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -46,9 +47,16 @@ export function SignUp() {
         password
       );
       const user = userCredential.user;
+
+      await updateProfile(user, {
+        displayName: displayName || name,
+      });
+
       setName("");
+      setDisplayName("");
       setEmail("");
       setPassword("");
+      setConfirmPassword("");
       console.log(user);
       navigate({ to: "/" });
     } catch (error: any) {
@@ -73,6 +81,13 @@ export function SignUp() {
           required
           value={name}
           onChange={(e) => setName(e.currentTarget.value)}
+        />
+        <TextInput
+          label="Display Name"
+          placeholder="Optional display name"
+          mt="md"
+          value={displayName}
+          onChange={(e) => setDisplayName(e.currentTarget.value)}
         />
         <TextInput
           label="Email"

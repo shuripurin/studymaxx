@@ -16,6 +16,7 @@ import classes from "./navbar.module.css";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../app/firebase";
+import avatar from "../../assets/avatar.png";
 
 export function Navbar() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -32,10 +33,9 @@ export function Navbar() {
   }, []);
 
   const user = {
-    name: "Jane Spoonfighter",
-    email: "janspoon@fighter.dev",
-    image:
-      "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-5.png",
+    name: auth.currentUser?.displayName,
+    email: auth.currentUser?.email,
+    image: avatar,
   };
 
   const handleLogout = (e: React.MouseEvent) => {
@@ -50,10 +50,11 @@ export function Navbar() {
   };
 
   const tabs = {
+    Dashboard: "/",
     Profile: "/profile",
-    Dashboard: "/dashboard",
     Notes: "/notes",
     Friends: "/friends",
+    Graph: "/graph",
   };
 
   return (
@@ -86,7 +87,7 @@ export function Navbar() {
           variant="filled"
           color="dark"
           onClick={() => {
-            navigate({ to: "/dashboard" });
+            navigate({ to: "/" });
             close();
           }}
         >
@@ -110,7 +111,7 @@ export function Navbar() {
                 <Group gap={7}>
                   <Avatar
                     src={user.image}
-                    alt={user.name}
+                    alt={"avatar"}
                     radius="xl"
                     size={20}
                   />
