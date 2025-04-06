@@ -19,7 +19,6 @@ import { Route as SignInImport } from './routes/sign-in'
 // Create Virtual Routes
 
 const FriendsLazyImport = createFileRoute('/friends')()
-const DashboardLazyImport = createFileRoute('/dashboard')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
@@ -29,12 +28,6 @@ const FriendsLazyRoute = FriendsLazyImport.update({
   path: '/friends',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/friends.lazy').then((d) => d.Route))
-
-const DashboardLazyRoute = DashboardLazyImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/dashboard.lazy').then((d) => d.Route))
 
 const SignUpRoute = SignUpImport.update({
   id: '/sign-up',
@@ -79,13 +72,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignUpImport
       parentRoute: typeof rootRoute
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/friends': {
       id: '/friends'
       path: '/friends'
@@ -102,7 +88,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/dashboard': typeof DashboardLazyRoute
   '/friends': typeof FriendsLazyRoute
 }
 
@@ -110,7 +95,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/dashboard': typeof DashboardLazyRoute
   '/friends': typeof FriendsLazyRoute
 }
 
@@ -119,16 +103,15 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
-  '/dashboard': typeof DashboardLazyRoute
   '/friends': typeof FriendsLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/sign-up' | '/dashboard' | '/friends'
+  fullPaths: '/' | '/sign-in' | '/sign-up' | '/friends'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sign-in' | '/sign-up' | '/dashboard' | '/friends'
-  id: '__root__' | '/' | '/sign-in' | '/sign-up' | '/dashboard' | '/friends'
+  to: '/' | '/sign-in' | '/sign-up' | '/friends'
+  id: '__root__' | '/' | '/sign-in' | '/sign-up' | '/friends'
   fileRoutesById: FileRoutesById
 }
 
@@ -136,7 +119,6 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
-  DashboardLazyRoute: typeof DashboardLazyRoute
   FriendsLazyRoute: typeof FriendsLazyRoute
 }
 
@@ -144,7 +126,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
-  DashboardLazyRoute: DashboardLazyRoute,
   FriendsLazyRoute: FriendsLazyRoute,
 }
 
@@ -161,7 +142,6 @@ export const routeTree = rootRoute
         "/",
         "/sign-in",
         "/sign-up",
-        "/dashboard",
         "/friends"
       ]
     },
@@ -173,9 +153,6 @@ export const routeTree = rootRoute
     },
     "/sign-up": {
       "filePath": "sign-up.tsx"
-    },
-    "/dashboard": {
-      "filePath": "dashboard.lazy.tsx"
     },
     "/friends": {
       "filePath": "friends.lazy.tsx"

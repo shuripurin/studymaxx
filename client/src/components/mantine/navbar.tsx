@@ -50,8 +50,8 @@ export function Navbar() {
   };
 
   const tabs = {
+    Dashboard: "/",
     Profile: "/profile",
-    Dashboard: "/dashboard",
     Notes: "/notes",
     Friends: "/friends",
   };
@@ -86,7 +86,7 @@ export function Navbar() {
           variant="filled"
           color="dark"
           onClick={() => {
-            navigate({ to: "/dashboard" });
+            navigate({ to: "/" });
             close();
           }}
         >
