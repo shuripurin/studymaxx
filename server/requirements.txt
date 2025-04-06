@@ -5,3 +5,7 @@ gunicorn
 Werkzeug
 python-dotenv
 firebase-admin
+pandas
+plotly
+openpyxl
+dash

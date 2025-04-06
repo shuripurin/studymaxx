@@ -12,6 +12,8 @@ from google.genai.types import Tool, GenerateContentConfig, GoogleSearch
 
 from pydantic import BaseModel
 
+from dashboard import create_dashboard  # Import the dashboard creation function
+
 # Load .env only in local development
 if os.environ.get("FLASK_ENV") == "development":
     from dotenv import load_dotenv
@@ -107,6 +109,9 @@ def get_gemini_response():
     return jsonify(parsed_json)
 
     return result
+
+# Integrate the Dash app
+create_dashboard(app)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
