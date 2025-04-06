@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   IconChevronDown,
   IconHeart,
@@ -25,6 +25,8 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./navbar.module.css";
 import { useNavigate } from "@tanstack/react-router";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../app/firebase";
 
 const user = {
   name: "Jane Spoonfighter",
@@ -37,6 +39,18 @@ export function Navbar() {
   const theme = useMantineTheme();
   const [opened, { open, close }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  console.log(isLoggedIn);
 
   const tabs = {
     Profile: "/profile",
@@ -44,8 +58,6 @@ export function Navbar() {
     Notes: "/notes",
     Friends: "/friends",
   };
-
-  const navigate = useNavigate();
 
   return (
     <div className={classes.header}>
@@ -72,7 +84,7 @@ export function Navbar() {
       <Text size="md" fw={700}>
         StudyMaxx
       </Text>
-      <div className="flex flex-wrap align-center items-center">
+      <div className="flex flex-wrap align-center items-center gap-2">
         <Button
           variant="filled"
           color="dark"
@@ -83,92 +95,102 @@ export function Navbar() {
         >
           My Dashboard
         </Button>
-        <Menu
-          width={260}
-          position="bottom-end"
-          transitionProps={{ transition: "pop-top-right" }}
-          onClose={() => setUserMenuOpened(false)}
-          onOpen={() => setUserMenuOpened(true)}
-          withinPortal
-        >
-          <Menu.Target>
-            <UnstyledButton
-              className={cx(classes.user, {
-                [classes.userActive]: userMenuOpened,
-              })}
-            >
-              <Group gap={7}>
-                <Avatar
-                  src={user.image}
-                  alt={user.name}
-                  radius="xl"
-                  size={20}
-                />
-                <Text fw={500} size="sm" lh={1} mr={3}>
-                  {user.name}
-                </Text>
-                <IconChevronDown size={12} stroke={1.5} />
-              </Group>
-            </UnstyledButton>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item
-              leftSection={
-                <IconHeart size={16} color={theme.colors.red[6]} stroke={1.5} />
-              }
-            >
-              Liked posts
-            </Menu.Item>
-            <Menu.Item
-              leftSection={
-                <IconStar
-                  size={16}
-                  color={theme.colors.yellow[6]}
-                  stroke={1.5}
-                />
-              }
-            >
-              Saved posts
-            </Menu.Item>
-            <Menu.Item
-              leftSection={
-                <IconMessage
-                  size={16}
-                  color={theme.colors.blue[6]}
-                  stroke={1.5}
-                />
-              }
-            >
-              Your comments
-            </Menu.Item>
+        {isLoggedIn ? (
+          <Menu
+            width={260}
+            position="bottom-end"
+            transitionProps={{ transition: "pop-top-right" }}
+            onClose={() => setUserMenuOpened(false)}
+            onOpen={() => setUserMenuOpened(true)}
+            withinPortal
+          >
+            <Menu.Target>
+              <UnstyledButton
+                className={cx(classes.user, {
+                  [classes.userActive]: userMenuOpened,
+                })}
+              >
+                <Group gap={7}>
+                  <Avatar
+                    src={user.image}
+                    alt={user.name}
+                    radius="xl"
+                    size={20}
+                  />
+                  <Text fw={500} size="sm" lh={1} mr={3}>
+                    {user.name}
+                  </Text>
+                  <IconChevronDown size={12} stroke={1.5} />
+                </Group>
+              </UnstyledButton>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                leftSection={
+                  <IconHeart
+                    size={16}
+                    color={theme.colors.red[6]}
+                    stroke={1.5}
+                  />
+                }
+              >
+                Liked posts
+              </Menu.Item>
+              <Menu.Item
+                leftSection={
+                  <IconStar
+                    size={16}
+                    color={theme.colors.yellow[6]}
+                    stroke={1.5}
+                  />
+                }
+              >
+                Saved posts
+              </Menu.Item>
+              <Menu.Item
+                leftSection={
+                  <IconMessage
+                    size={16}
+                    color={theme.colors.blue[6]}
+                    stroke={1.5}
+                  />
+                }
+              >
+                Your comments
+              </Menu.Item>
 
-            <Menu.Label>Settings</Menu.Label>
-            <Menu.Item leftSection={<IconSettings size={16} stroke={1.5} />}>
-              Account settings
-            </Menu.Item>
-            <Menu.Item
-              leftSection={<IconSwitchHorizontal size={16} stroke={1.5} />}
-            >
-              Change account
-            </Menu.Item>
-            <Menu.Item leftSection={<IconLogout size={16} stroke={1.5} />}>
-              Logout
-            </Menu.Item>
+              <Menu.Label>Settings</Menu.Label>
+              <Menu.Item leftSection={<IconSettings size={16} stroke={1.5} />}>
+                Account settings
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<IconSwitchHorizontal size={16} stroke={1.5} />}
+              >
+                Change account
+              </Menu.Item>
+              <Menu.Item leftSection={<IconLogout size={16} stroke={1.5} />}>
+                Logout
+              </Menu.Item>
 
-            <Menu.Divider />
+              <Menu.Divider />
 
-            <Menu.Label>Danger zone</Menu.Label>
-            <Menu.Item leftSection={<IconPlayerPause size={16} stroke={1.5} />}>
-              Pause subscription
-            </Menu.Item>
-            <Menu.Item
-              color="red"
-              leftSection={<IconTrash size={16} stroke={1.5} />}
-            >
-              Delete account
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
+              <Menu.Label>Danger zone</Menu.Label>
+              <Menu.Item
+                leftSection={<IconPlayerPause size={16} stroke={1.5} />}
+              >
+                Pause subscription
+              </Menu.Item>
+              <Menu.Item
+                color="red"
+                leftSection={<IconTrash size={16} stroke={1.5} />}
+              >
+                Delete account
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        ) : (
+          <Button>Sign In</Button>
+        )}
       </div>
     </div>
   );

@@ -5,8 +5,6 @@ import "./styles/index.css";
 import "@mantine/core/styles.css";
 import { routeTree } from "./routeTree.gen";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./app/firebase";
 
 const router = createRouter({ routeTree });
 
@@ -15,14 +13,6 @@ const theme = createTheme({
 });
 
 const rootElement = document.getElementById("root")!;
-
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log("logged in!");
-  } else {
-    console.log("No user");
-  }
-});
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
