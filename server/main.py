@@ -18,6 +18,15 @@ from flask_cors import CORS  # Import Flask-CORS
 
 from groq import Groq
 
+import datetime
+import os.path
+
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
 # Load .env only in local development
 if os.environ.get("FLASK_ENV") == "development":
     from dotenv import load_dotenv
@@ -26,6 +35,8 @@ if os.environ.get("FLASK_ENV") == "development":
 google_search_tool = Tool(
     google_search = GoogleSearch()
 )
+
+SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
 app = Flask(__name__)
 #CORS(app, origins=["http://localhost:5173", "https://studymaxx.vercel.app"])  # Enable CORS for specific origins
@@ -36,6 +47,16 @@ gemini_client = initialize_genai_client()
 
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+cred = credentials.Certificate("fire-5a6ba-e3c9ccfcc757.json")
+
+firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+
 # Read the contents of config.txt as a string
 config_file_path = os.path.join(os.path.dirname(__file__), "config.txt")
 try:
@@ -44,9 +65,79 @@ try:
 except FileNotFoundError:
     config_content = "Config file not found."
 
+def get_calendar_service():
+    """Authenticate and return the Google Calendar service."""
+    creds = None
+    if os.path.exists("token.json"):
+        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(
+                "credentials.json", SCOPES
+            )
+            creds = flow.run_local_server(port=0)
+        with open("token.json", "w") as token:
+            token.write(creds.to_json())
+    return build("calendar", "v3", credentials=creds)
+
+@app.route("/api/calendar/create_event", methods=["GET"])
+def create_event_route():
+    """Route to create a hardcoded Google Calendar event."""
+    try:
+        # Hardcoded event details for testing
+        event = {
+            'summary': 'Beaverhacks Meeting',
+            'location': 'Corvallis, Oregon, USA',
+            'description': 'A chance to collaborate on Beaverhacks projects.',
+            'start': {
+                'dateTime': '2025-04-06T09:00:00-07:00',  # Sunday, 9:00 AM Pacific Time
+                'timeZone': 'America/Los_Angeles',
+            },
+            'end': {
+                'dateTime': '2025-04-06T10:00:00-07:00',  # Sunday, 10:00 AM Pacific Time
+                'timeZone': 'America/Los_Angeles',
+            },
+            'attendees': [
+                {'email': 'attendee1@example.com'},
+                {'email': 'attendee2@example.com'},
+            ],
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                    {'method': 'email', 'minutes': 24 * 60},  # Reminder 1 day before
+                    {'method': 'popup', 'minutes': 10},      # Reminder 10 minutes before
+                ],
+            },
+        }
+
+        # Get the Google Calendar service
+        service = get_calendar_service()
+
+        # Insert the event into the calendar
+        event_result = service.events().insert(calendarId='primary', body=event).execute()
+
+        # Return the event link as a response
+        return jsonify({"message": "Event created successfully", "event_link": event_result.get("htmlLink")})
+
+    except HttpError as error:
+        return jsonify({"error": f"An error occurred: {error}"}), 500
+
 @app.route("/")
 def hello_world():
     return "<p>2025 Beaverhacks!</p>"
+
+@app.route('/api/gemini/preferences')
+def preferences():
+    # Fetch a single document from Firestore
+    doc_ref = db.collection("users").document("guest")  # Replace "guest" with the desired document ID
+    doc = doc_ref.get()
+
+    if (doc.exists):
+        return jsonify(doc.to_dict())  # Return the document's data as JSON
+    else:
+        return jsonify({"error": "Document not found"}), 404
 
 @app.route('/api/gemini/chat', methods=['POST'])
 def chat_with_gemini():
@@ -63,10 +154,12 @@ def chat_with_gemini():
     )
     return jsonify({"response": response.candidates[0].content.parts[0].text})
 
-@app.route('/api/gemini/conv')
+@app.route('/api/gemini/conv', methods=['POST'])
 def get_gemini_response():
     """Fetches a response from the Gemini API."""
-    message = "I want to become a software engineer."
+    #message = "I want to become a software engineer."
+    data = request.get_json()
+    message = data.get("message")
     new_message = get_groq_response(groq_client, message)
     response = gemini_client.models.generate_content(
         model="gemini-2.0-flash",
@@ -125,4 +218,4 @@ def get_gemini_response():
 create_dashboard(app)
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    app.run(debug=True, host="0.0.0.0", port=5001)  # Use port 5001 for the new server

@@ -8,15 +8,26 @@ def main():
     #breakpoint()
     base_url = "https://c680-128-193-154-97.ngrok-free.app/"
     planner = False
-    if planner:
-        response = requests.get(f"{base_url}/api/gemini/conv")
+    planner = 1
+    if planner == 0:
+        response = requests.get(f"{base_url}/api/gemini/preferences")
+        print("Status Code:", response.status_code)
+        print("Response JSON:", response.json()) 
+    if planner == 1:
+        message = "I want to become a software engineer."
+        response = requests.post(f"{base_url}/api/gemini/conv", json={"message": message})
+        #response = requests.get(f"{base_url}/api/gemini/conv")
         print("Status Code:", response.status_code)
         print("Response JSON:", response.json())
-    else:
+    elif planner == 2:
         message = "I don't understand dynamic programming. Can you help me?"
         response = requests.post(f"{base_url}/api/gemini/chat", json={"message": message})
         print("Status Code:", response.status_code)
         print("Response JSON:", response.json())
+    elif planner == 3:
+        response = requests.get(f"{base_url}/api/calendar/create_event")
+        print("Status Code:", response.status_code)
+        print("Response JSON:", response.json()) 
 
 if __name__ == "__main__":
     main()
