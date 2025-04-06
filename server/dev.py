@@ -63,10 +63,12 @@ def chat_with_gemini():
     )
     return jsonify({"response": response.candidates[0].content.parts[0].text})
 
-@app.route('/api/gemini/conv')
+@app.route('/api/gemini/conv', methods=['POST'])
 def get_gemini_response():
     """Fetches a response from the Gemini API."""
-    message = "I want to become a software engineer."
+    #message = "I want to become a software engineer."
+    data = request.get_json()
+    message = data.get("message")
     new_message = get_groq_response(groq_client, message)
     response = gemini_client.models.generate_content(
         model="gemini-2.0-flash",
@@ -125,4 +127,4 @@ def get_gemini_response():
 create_dashboard(app)
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    app.run(debug=True, host="0.0.0.0", port=5001)  # Use port 5001 for the new server

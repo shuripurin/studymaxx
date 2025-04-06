@@ -19,7 +19,8 @@ def get_groq_response(client, message):
         ],
         model="llama-3.3-70b-versatile",
     )
-    return chat_completion.data[0].content
+    # Extract the content from the first choice
+    return chat_completion.choices[0].message.content
 
 # Initialize Google GenAI client
 def initialize_genai_client():
