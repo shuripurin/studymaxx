@@ -1,1 +1,9 @@
+# Ignore Python virtual environment
+.venv/
+
+# Ignore Python cache
+__pycache__/
+
+# Ignore environment and secret keys
 .env
+firebase-key.json
