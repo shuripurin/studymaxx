@@ -1,4 +1,5 @@
 Flask
+flask-cors
 pytest
 requests
 gunicorn
@@ -6,3 +7,5 @@ Werkzeug
 python-dotenv
 firebase-admin
 google-generativeai
+google-generativeai>=0.3.2
+groq
