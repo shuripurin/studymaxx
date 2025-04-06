@@ -15,6 +15,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as SignUpImport } from './routes/sign-up'
 import { Route as SignInImport } from './routes/sign-in'
+import { Route as GraphImport } from './routes/graph'
 
 // Create Virtual Routes
 
@@ -41,6 +42,12 @@ const SignInRoute = SignInImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const GraphRoute = GraphImport.update({
+  id: '/graph',
+  path: '/graph',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
   path: '/',
@@ -56,6 +63,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/graph': {
+      id: '/graph'
+      path: '/graph'
+      fullPath: '/graph'
+      preLoaderRoute: typeof GraphImport
       parentRoute: typeof rootRoute
     }
     '/sign-in': {
@@ -86,6 +100,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/graph': typeof GraphRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/friends': typeof FriendsLazyRoute
@@ -93,6 +108,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/graph': typeof GraphRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/friends': typeof FriendsLazyRoute
@@ -101,6 +117,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/graph': typeof GraphRoute
   '/sign-in': typeof SignInRoute
   '/sign-up': typeof SignUpRoute
   '/friends': typeof FriendsLazyRoute
@@ -108,15 +125,16 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in' | '/sign-up' | '/friends'
+  fullPaths: '/' | '/graph' | '/sign-in' | '/sign-up' | '/friends'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sign-in' | '/sign-up' | '/friends'
-  id: '__root__' | '/' | '/sign-in' | '/sign-up' | '/friends'
+  to: '/' | '/graph' | '/sign-in' | '/sign-up' | '/friends'
+  id: '__root__' | '/' | '/graph' | '/sign-in' | '/sign-up' | '/friends'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  GraphRoute: typeof GraphRoute
   SignInRoute: typeof SignInRoute
   SignUpRoute: typeof SignUpRoute
   FriendsLazyRoute: typeof FriendsLazyRoute
@@ -124,6 +142,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  GraphRoute: GraphRoute,
   SignInRoute: SignInRoute,
   SignUpRoute: SignUpRoute,
   FriendsLazyRoute: FriendsLazyRoute,
@@ -140,6 +159,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/graph",
         "/sign-in",
         "/sign-up",
         "/friends"
@@ -147,6 +167,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/graph": {
+      "filePath": "graph.jsx"
     },
     "/sign-in": {
       "filePath": "sign-in.tsx"
