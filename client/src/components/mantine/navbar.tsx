@@ -51,7 +51,6 @@ export function Navbar() {
 
   const tabs = {
     Dashboard: "/",
-    Preferences: "/preferences",
     "AI Chat": "/AI_Chat",
     Friends: "/friends",
     Graph: "/study_plan",
