@@ -7,9 +7,13 @@ def main():
     #base_url = "https://69a2-128-193-154-97.ngrok-free.app/"
     #breakpoint()
     base_url = "https://c680-128-193-154-97.ngrok-free.app/"
-    response = requests.get(f"{base_url}/api/gemini/conv")
+    #response = requests.get(f"{base_url}/api/gemini/conv")
+    #print("Status Code:", response.status_code)
+    #print("Response JSON:", response.json())
+    message = "I don't understand dynamic programming. Can you help me?"
+    response = requests.post(f"{base_url}/api/gemini/chat", json={"message": message})
     print("Status Code:", response.status_code)
     print("Response JSON:", response.json())
-    
+
 if __name__ == "__main__":
     main()

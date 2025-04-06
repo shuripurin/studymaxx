@@ -10,7 +10,6 @@ import json
 from google import genai
 from google.genai.types import Tool, GenerateContentConfig, GoogleSearch
 
-# structure
 from pydantic import BaseModel
 
 # Load .env only in local development
@@ -33,12 +32,25 @@ try:
 except FileNotFoundError:
     config_content = "Config file not found."
 
-# Log or use the config_content as needed
-#print("Config Content:", config_content)
-
 @app.route("/")
 def hello_world():
     return "<p>2025 Beaverhacks!</p>"
+
+@app.route('/api/gemini/chat', methods=['POST'])
+def chat_with_gemini():
+    breakpoint()
+    data = request.get_json()
+    message = data.get("message")
+    response = gemini_client.models.generate_content(
+        model="gemini-2.0-flash",
+        config=types.GenerateContentConfig(
+            response_modalities=["TEXT"],
+            system_instruction="You are a mentor.",
+            temperature=0,
+        ),
+        contents=[message]
+    )
+    return jsonify({"response": response.candidates[0].content.parts[0].text})
 
 @app.route('/api/gemini/conv')
 def get_gemini_response():
