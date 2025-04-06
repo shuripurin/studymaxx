@@ -11,18 +11,39 @@ import {
   Title,
   Text as MantineText,
 } from "@mantine/core";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../app/firebase";
 
 export function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formError, setFormError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (!email || !password) {
       setFormError("Please fill in all fields");
       return;
     }
+
     setFormError("");
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      console.log("Signed in:", user);
+      setEmail("");
+      setPassword("");
+      navigate({ to: "/" });
+    } catch (error: any) {
+      setFormError(error?.message || "Something went wrong.");
+    }
   };
 
   return (
@@ -30,7 +51,7 @@ export function SignIn() {
       <Title ta="center">Welcome back!</Title>
       <MantineText c="dimmed" size="sm" ta="center" mt={5}>
         Do not have an account yet?{" "}
-        <Anchor size="sm" component="button">
+        <Anchor size="sm" component={Link} to="/sign-up">
           Create account
         </Anchor>
       </MantineText>

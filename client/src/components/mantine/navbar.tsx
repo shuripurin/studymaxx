@@ -24,8 +24,8 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./navbar.module.css";
-import { useNavigate } from "@tanstack/react-router";
-import { onAuthStateChanged } from "firebase/auth";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../app/firebase";
 
 const user = {
@@ -51,6 +51,17 @@ export function Navbar() {
   }, []);
 
   console.log(isLoggedIn);
+
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    signOut(auth)
+      .then(() => {
+        console.log("successfully signed out");
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
 
   const tabs = {
     Profile: "/profile",
@@ -168,7 +179,10 @@ export function Navbar() {
               >
                 Change account
               </Menu.Item>
-              <Menu.Item leftSection={<IconLogout size={16} stroke={1.5} />}>
+              <Menu.Item
+                leftSection={<IconLogout size={16} stroke={1.5} />}
+                onClick={handleLogout}
+              >
                 Logout
               </Menu.Item>
 
@@ -189,7 +203,9 @@ export function Navbar() {
             </Menu.Dropdown>
           </Menu>
         ) : (
-          <Button>Sign In</Button>
+          <Link to="/sign-in">
+            <Button>Sign In</Button>
+          </Link>
         )}
       </div>
     </div>

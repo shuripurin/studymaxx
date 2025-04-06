@@ -12,6 +12,9 @@ import {
   Title,
   Text as MantineText,
 } from "@mantine/core";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../app/firebase";
 
 export function SignUp() {
   const [name, setName] = useState("");
@@ -20,8 +23,9 @@ export function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [formError, setFormError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setFormError("");
     setPasswordError("");
 
@@ -34,7 +38,22 @@ export function SignUp() {
       setPasswordError("Passwords do not match");
       return;
     }
-    setFormError("");
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      setName("");
+      setEmail("");
+      setPassword("");
+      console.log(user);
+      navigate({ to: "/" });
+    } catch (error: any) {
+      console.log(error);
+    }
   };
 
   return (
@@ -42,7 +61,7 @@ export function SignUp() {
       <Title ta="center">Create an account</Title>
       <Text c="dimmed" size="sm" ta="center" mt={5}>
         Already have an account?{" "}
-        <Anchor size="sm" component="button">
+        <Anchor size="sm" component={Link} to="/sign-in">
           Sign in
         </Anchor>
       </Text>
