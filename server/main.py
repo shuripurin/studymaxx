@@ -55,4 +55,5 @@ def verify_token():
         return jsonify({"error": str(e)}), 401
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8080)

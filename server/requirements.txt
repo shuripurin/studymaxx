@@ -5,3 +5,4 @@ gunicorn
 Werkzeug
 python-dotenv
 firebase-admin
+google-generativeai
