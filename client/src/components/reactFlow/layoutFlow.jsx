@@ -14,7 +14,7 @@ import { Drawer, Loader } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import ELK from "elkjs/lib/elk.bundled.js";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { fetchGraphNodes } from "../../routes.js";
+import { fetchGraphNodes, graphBaseUrl } from "../../routes.js";
 
 const elk = new ELK();
 const elkOptions = {
@@ -143,14 +143,11 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
 };
 
 const postMessage = async (payload) => {
-  const response = await fetch(
-    "https://c680-128-193-154-97.ngrok-free.app/api/gemini/conv",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    }
-  );
+  const response = await fetch(graphBaseUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
   if (!response.ok) {
     throw new Error("Failed to post message");
   }
