@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 import os
 from google.genai import types
 
-from llm import initialize_genai_client
+from llm import initialize_genai_client, get_groq_response
 
 import json
 
@@ -15,6 +15,8 @@ from pydantic import BaseModel
 from dashboard import create_dashboard  # Import the dashboard creation function
 
 from flask_cors import CORS  # Import Flask-CORS
+
+from groq import Groq
 
 # Load .env only in local development
 if os.environ.get("FLASK_ENV") == "development":
@@ -29,6 +31,8 @@ app = Flask(__name__)
 CORS(app, origins=["http://localhost:5173", "https://studymaxx.vercel.app"])  # Enable CORS for specific origins
 
 gemini_client = initialize_genai_client()
+
+groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 # Read the contents of config.txt as a string
 config_file_path = os.path.join(os.path.dirname(__file__), "config.txt")

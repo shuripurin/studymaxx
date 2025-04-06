@@ -5,6 +5,21 @@ from google.genai.types import HttpOptions, Part
 from google.genai import types
 from groq import Groq
 from google.genai.types import Tool, GenerateContentConfig, GoogleSearch
+from flask import Flask, request, jsonify
+
+def get_groq_response(client, message):
+    """Fetches a response from the Groq API."""
+    message = "You are a mentor. Give a short summary for Gemini input from the following message: " + message
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": message,
+            }
+        ],
+        model="llama-3.3-70b-versatile",
+    )
+    return chat_completion.data[0].content
 
 # Initialize Google GenAI client
 def initialize_genai_client():
