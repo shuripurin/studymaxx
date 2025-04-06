@@ -217,62 +217,65 @@ export const LayoutFlow = () => {
   };
 
   return (
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onConnect={onConnect}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        fitView
-        panOnScroll
-        selectionOnDrag
-        minZoom={0.1}
-        onNodeMouseEnter={handleNodeMouseEnter}
-        onNodeMouseLeave={handleNodeMouseLeave}
-        onNodeClick={handleNodeClick}
-        style={{
-          backgroundColor: "transparent",
-          height: "100%",
-          width: "100%",
-        }}
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onConnect={onConnect}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      fitView
+      panOnScroll
+      selectionOnDrag
+      minZoom={0.1}
+      onNodeMouseEnter={handleNodeMouseEnter}
+      onNodeMouseLeave={handleNodeMouseLeave}
+      onNodeClick={handleNodeClick}
+      style={{
+        backgroundColor: "transparent",
+        height: "100%",
+        width: "100%",
+      }}
+    >
+      <Panel position="top-right">
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button
+            style={{
+              padding: "0.5rem",
+              backgroundColor: "#fff",
+              color: "#000000",
+              border: "1px solid #000000",
+              cursor: "pointer",
+            }}
+            onClick={() => onLayout({ direction: "DOWN" })}
+          >
+            Vertical Layout
+          </button>
+          <button
+            style={{
+              padding: "0.5rem",
+              backgroundColor: "#000000",
+              color: "#fff",
+              cursor: "pointer",
+            }}
+            onClick={() => onLayout({ direction: "RIGHT" })}
+          >
+            Horizontal Layout
+          </button>
+        </div>
+      </Panel>
+      <Background />
+      <Drawer
+        opened={opened}
+        onClose={close}
+        position="right"
+        title="Course Info"
       >
-        <Panel position="top-right">
-          <div style={{ display: "flex", gap: "0.5rem" }}>
-            <button
-              style={{
-                padding: "0.5rem",
-                backgroundColor: "#d73f09",
-                color: "#fff",
-              }}
-              onClick={() => onLayout({ direction: "DOWN" })}
-            >
-              Vertical Layout
-            </button>
-            <button
-              style={{
-                padding: "0.5rem",
-                backgroundColor: "#fff",
-                color: "#000",
-              }}
-              onClick={() => onLayout({ direction: "RIGHT" })}
-            >
-              Horizontal Layout
-            </button>
-          </div>
-        </Panel>
-        <Background />
-        <Drawer
-          opened={opened}
-          onClose={close}
-          position="right"
-          title="Course Info"
-        >
-          <div style={{ padding: "1rem" }}>
-            <p>Click a node to toggle whether it’s been taken.</p>
-            <p>Hovered nodes will show prerequisites and unlocked courses.</p>
-          </div>
-        </Drawer>
-      </ReactFlow>
+        <div style={{ padding: "1rem" }}>
+          <p>Click a node to toggle whether it’s been taken.</p>
+          <p>Hovered nodes will show prerequisites and unlocked courses.</p>
+        </div>
+      </Drawer>
+    </ReactFlow>
   );
 };
 

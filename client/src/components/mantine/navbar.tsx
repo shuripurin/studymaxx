@@ -54,6 +54,7 @@ export function Navbar() {
     Profile: "/profile",
     Notes: "/notes",
     Friends: "/friends",
+    Graph: "/graph",
   };
 
   return (
