@@ -293,13 +293,13 @@ export const LayoutFlow = () => {
         </Panel>
 
         <Panel position="top-center">
-          <div className="flex items-center gap-2 bg-gray-200 p-2 rounded">
+          <div className="flex items-center gap-2 bg-white p-2 rounded">
             <input
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Ask me anything"
-              className="p-2 border border-gray-300 rounded"
+              className="p-2 border border-gray-300 rounded w-72"
             />
             {loading ? (
               <Loader />
