@@ -53,7 +53,7 @@ export function Navbar() {
     Dashboard: "/",
     "AI Chat": "/AI_Chat",
     Friends: "/friends",
-    Graph: "/study_plan",
+    "Study Plan": "/study_plan",
   };
 
   return (
