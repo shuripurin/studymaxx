@@ -87,7 +87,7 @@ export function FriendsList() {
           </Button>
         </div>
         <div className="rounded-xl bg-purple-50 p-2">
-          <ScrollArea h={600}>
+          <ScrollArea h={550}>
             <div className="space-y-1">
               {friends.map((friend) => (
                 <div

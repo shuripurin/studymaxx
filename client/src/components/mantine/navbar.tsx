@@ -17,6 +17,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../app/firebase";
 import avatar from "../../assets/avatar.png";
+import { CountDown } from "../countdown";
 
 export function Navbar() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -28,7 +29,6 @@ export function Navbar() {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -81,6 +81,7 @@ export function Navbar() {
       <Text size="md" fw={700}>
         StudyMaxx
       </Text>
+      <CountDown />
       <div className="flex flex-wrap align-center items-center gap-2">
         <Button
           variant="filled"
