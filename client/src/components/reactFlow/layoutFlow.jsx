@@ -164,11 +164,11 @@ export const LayoutFlow = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const postMessageMutation = useMutation({
     mutationFn: postMessage,
     onSuccess: (data) => {
-      console.log("Message posted successfully:", data);
       if (data.initialNodes && data.initialEdges) {
         const opts = { "elk.direction": "DOWN", ...elkOptions };
         getLayoutedElements(data.initialNodes, data.initialEdges, opts).then(
@@ -178,6 +178,7 @@ export const LayoutFlow = () => {
               layoutedEdges,
               null
             );
+            setLoading(false);
             setNodes(resetStyles);
             setEdges(layoutedEdges);
             window.requestAnimationFrame(() => fitView());
@@ -187,6 +188,7 @@ export const LayoutFlow = () => {
     },
     onError: (error) => {
       console.error("Error posting message:", error);
+      setLoading(false);
     },
   });
 
@@ -255,6 +257,7 @@ export const LayoutFlow = () => {
   };
 
   const handlePostMessage = () => {
+    setLoading(true);
     postMessageMutation.mutate({ message });
   };
 
@@ -301,23 +304,23 @@ export const LayoutFlow = () => {
               placeholder="Ask me anything"
               className="p-2 border border-gray-300 rounded"
             />
-            {postMessageMutation.isLoading ? (
-              <div>loading...</div>
+            {loading ? (
+              <Loader />
             ) : (
               <button
                 className="px-4 py-2 bg-black text-white cursor-pointer disabled:opacity-50"
                 onClick={handlePostMessage}
-                disabled={postMessageMutation.isLoading}
+                disabled={loading}
               >
                 Send Message
               </button>
             )}
+            {postMessageMutation.error && (
+              <div className="text-red-500 mt-2">
+                Error: {postMessageMutation.error.message}
+              </div>
+            )}
           </div>
-          {postMessageMutation.error && (
-            <div className="text-red-500 mt-2">
-              Error: {postMessageMutation.error.message}
-            </div>
-          )}
         </Panel>
 
         <Background />
