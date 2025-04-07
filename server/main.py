@@ -128,16 +128,29 @@ def create_event_route():
 def hello_world():
     return "<p>2025 Beaverhacks!</p>"
 
-@app.route('/api/gemini/preferences')
-def preferences():
-    # Fetch a single document from Firestore
-    doc_ref = db.collection("users").document("guest")  # Replace "guest" with the desired document ID
-    doc = doc_ref.get()
+# @app.route('/api/gemini/preferences')
+# def preferences():
+#     # Fetch a single document from Firestore
+#     doc_ref = db.collection("users").document("guest")  # Replace "guest" with the desired document ID
+#     doc = doc_ref.get()
 
-    if (doc.exists):
-        return jsonify(doc.to_dict())  # Return the document's data as JSON
-    else:
-        return jsonify({"error": "Document not found"}), 404
+#     if (doc.exists):
+#         return jsonify(doc.to_dict())  # Return the document's data as JSON
+#     else:
+#         return jsonify({"error": "Document not found"}), 404
+
+@app.route('/api/gemini/preferences', methods=['POST'])
+def update_preferences():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid data"}), 400
+
+
+    doc_ref = db.collection("users").document("guest")
+
+    doc_ref.set(data, merge=True)
+
+    return jsonify({"success": True, "message": "Updated successfully"}), 200
 
 @app.route('/api/gemini/chat', methods=['POST'])
 def chat_with_gemini():
