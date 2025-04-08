@@ -1,7 +1,7 @@
 function DashEmbed() {
   return (
     <iframe
-      src="https://c680-128-193-154-97.ngrok-free.app/dashboard/"
+      src="https://studymaxx.onrender.com/dashboard/"
       style={{ width: "100%", height: "600px", border: "none" }}
       title="Dash Application"
     />
