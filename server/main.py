@@ -229,6 +229,7 @@ def get_gemini_response():
 
 # Integrate the Dash app
 create_dashboard(app)
+# https://musical-rich-gorilla.ngrok-free.app
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5001)  # Use port 5001 for the new server
